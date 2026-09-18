@@ -254,11 +254,11 @@
   details.faq-item p a{ color:var(--accent); }
 
   footer.site{ border-top:1px solid var(--line); padding-block:36px; }
-  .footer-inner{ display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; }
+  .footer-inner{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; text-align:center; }
   .footer-note{ font-size:.84rem; color:var(--ink-soft); }
   .footer-note a{ color:var(--ink); font-weight:600; text-decoration:none; }
   .footer-note a:hover{ color:var(--accent); }
-  .footer-links{ display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; row-gap:10px; column-gap:16px; font-size:.84rem; }
+  .footer-links{ display:flex; flex-wrap:wrap; align-items:center; justify-content:center; row-gap:10px; column-gap:16px; font-size:.84rem; }
   .footer-links a{ color:var(--ink-soft); text-decoration:none; cursor:pointer; }
   .footer-links a:hover{ color:var(--accent); }
   .support-link{ display:inline-flex; align-items:center; gap:6px; font-weight:600; color:#92400e; background:#fef3c7; border:1px solid #fde68a; padding:5px 13px; border-radius:999px; }
@@ -556,7 +556,20 @@
       <a id="footerWebzenithLink" href="https://synthlucida.com/landing_webzenith.html" target="_blank" rel="noopener">WEBZENith</a>
       <a href="https://webzen2026.github.io/xtally/" target="_blank" rel="noopener">Xtally Documents</a>
       <a href="https://webzen2026.github.io/xtally-sheets/" target="_blank" rel="noopener">Xtally Sheets</a>
-      <a href="#app" data-i18n="footerApp">Skener</a>
+      <a id="footerXtallyLink" href="https://synthlucida.com/xtally-landing-cz.html" target="_blank" rel="noopener">XTALLY</a>
+      <a href="https://relaxplayer.eu" target="_blank" rel="noopener">RELAXPLAYER</a>
+      <a id="footerProgreseLink" href="https://synthlucida.com/progrese-landing-cz.html" target="_blank" rel="noopener" data-i18n="footerProgrese">PROGRESE</a>
+      <a id="footerVapetrackLink" href="https://synthlucida.com/landing_vapetrack.html" target="_blank" rel="noopener">VAPETRACK</a>
+      <a href="https://synthlucida.com/tripcost.html" target="_blank" rel="noopener">TRIP COST</a>
+      <a href="https://synthlucida.com/weather.html" target="_blank" rel="noopener">WEATHER</a>
+      <a href="https://synthlucida.com/vyplata.html" target="_blank" rel="noopener" data-i18n="footerVyplata">VÝPLATA</a>
+      <a href="https://synthlucida.com/michani-liquidu.html" target="_blank" rel="noopener" data-i18n="footerMichalna">MÍCHÁRNA</a>
+      <a href="https://synthlucida.com/denik-vozidla.html" target="_blank" rel="noopener" data-i18n="footerDenikVozidla">DENÍK VOZIDLA</a>
+      <a href="https://synthlucida.com/vodovaha.html" target="_blank" rel="noopener" data-i18n="footerVodovaha">VODOVÁHA</a>
+      <a id="footerSeovipLink" href="https://webzen2026.github.io/seovip/" target="_blank" rel="noopener">SEO VIP</a>
+      <a id="footerTarotLink" href="https://noctuarytarot.com/landing.html" target="_blank" rel="noopener">NOCTUARY TAROT</a>
+      <a id="footerAmbientLink" href="https://synthlucida.com/relax-landing-cz.html" target="_blank" rel="noopener">AMBIENT FLOW</a>
+      <a href="https://uklidnito.eu" target="_blank" rel="noopener">UKLIDNI TO</a>
       <a href="./privacy.html" data-i18n="footerPrivacy">Ochrana soukromí</a>
       <a class="support-link" href="https://uklidnito.gumroad.com/coffee" target="_blank" rel="noopener" data-i18n="supportLink">Líbí se ti appka? Podpoř kávou ☕</a>
     </div>
@@ -622,6 +635,7 @@
       faq5q:"Funguje appka bez internetu?", faq5a:"Ano, po prvním načtení — Xtally Scanner je PWA (Progressive Web App) a klíčový obsah appky se uloží do zařízení. Přístup ke kameře vyžaduje prohlížeč vždy, ten funguje offline i online stejně.",
       faq6q:"Souvisí Xtally Scanner se SYNTHLUCIDA?", faq6a:"Ano, je to samostatný projekt z rodiny bezplatných webových nástrojů <a href=\"https://synthlucida.com\" target=\"_blank\" rel=\"noopener\">SYNTHLUCIDA</a> — stejně jako <a href=\"https://webzen2026.github.io/xtally/\" target=\"_blank\" rel=\"noopener\">Xtally Documents</a> a <a href=\"https://webzen2026.github.io/xtally-sheets/\" target=\"_blank\" rel=\"noopener\">Xtally Sheets</a>.",
       footerNote:"Xtally Scanner je součástí rodiny bezplatných webových nástrojů", footerApp:"Skener", footerPrivacy:"Ochrana soukromí",
+      footerProgrese:"PROGRESE", footerVyplata:"VÝPLATA", footerMichalna:"MÍCHÁRNA", footerDenikVozidla:"DENÍK VOZIDLA", footerVodovaha:"VODOVÁHA",
       supportLink:"Líbí se ti appka? Podpoř kávou ☕"
     },
     en: {
@@ -676,6 +690,7 @@
       faq5q:"Does the app work without internet?", faq5a:"Yes, after the first load — Xtally Scanner is a PWA (Progressive Web App) and caches its core content on your device. Camera access always requires the browser itself, which behaves the same online or offline.",
       faq6q:"Is Xtally Scanner related to SYNTHLUCIDA?", faq6a:"Yes, it's a standalone project from the <a href=\"https://synthlucida.com\" target=\"_blank\" rel=\"noopener\">SYNTHLUCIDA</a> family of free web tools — just like <a href=\"https://webzen2026.github.io/xtally/\" target=\"_blank\" rel=\"noopener\">Xtally Documents</a> and <a href=\"https://webzen2026.github.io/xtally-sheets/\" target=\"_blank\" rel=\"noopener\">Xtally Sheets</a>.",
       footerNote:"Xtally Scanner is part of the SYNTHLUCIDA family of free web tools", footerApp:"Scanner", footerPrivacy:"Privacy Policy",
+      footerProgrese:"PROGRESS", footerVyplata:"PAYDAY", footerMichalna:"LIQUID MIXER", footerDenikVozidla:"VEHICLE LOG", footerVodovaha:"SPIRIT LEVEL",
       supportLink:"Enjoying the app? Support with a coffee ☕"
     }
   };
@@ -708,6 +723,18 @@
     });
     var webzenithLink = document.getElementById("footerWebzenithLink");
     if (webzenithLink) webzenithLink.href = currentLang === "en" ? "https://synthlucida.com/landing_webzenith-en.html" : "https://synthlucida.com/landing_webzenith.html";
+    var xtallyLink = document.getElementById("footerXtallyLink");
+    if (xtallyLink) xtallyLink.href = currentLang === "en" ? "https://synthlucida.com/xtally-landing.html" : "https://synthlucida.com/xtally-landing-cz.html";
+    var progreseLink = document.getElementById("footerProgreseLink");
+    if (progreseLink) progreseLink.href = currentLang === "en" ? "https://synthlucida.com/progrese-landing.html" : "https://synthlucida.com/progrese-landing-cz.html";
+    var vapetrackLink = document.getElementById("footerVapetrackLink");
+    if (vapetrackLink) vapetrackLink.href = currentLang === "en" ? "https://synthlucida.com/landing_vapetrack-en.html" : "https://synthlucida.com/landing_vapetrack.html";
+    var seovipLink = document.getElementById("footerSeovipLink");
+    if (seovipLink) seovipLink.href = currentLang === "en" ? "https://webzen2026.github.io/seovip/en/" : "https://webzen2026.github.io/seovip/";
+    var tarotLink = document.getElementById("footerTarotLink");
+    if (tarotLink) tarotLink.href = currentLang === "en" ? "https://noctuarytarot.com/landing-en.html" : "https://noctuarytarot.com/landing.html";
+    var ambientLink = document.getElementById("footerAmbientLink");
+    if (ambientLink) ambientLink.href = currentLang === "en" ? "https://synthlucida.com/relax-landing.html" : "https://synthlucida.com/relax-landing-cz.html";
     updatePageCount();
     renderPages();
   }
