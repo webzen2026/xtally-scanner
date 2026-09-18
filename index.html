@@ -122,15 +122,43 @@
   .btn-block{ width:100%; }
 
   /* Hero */
-  .hero{ padding:clamp(40px,7vw,72px) 0 clamp(24px,5vw,40px); text-align:center; }
+  .hero{ padding-block:14px 10px; text-align:center; }
   .hero-kicker{ font-family:'Sora',sans-serif; font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:700; margin:0 0 14px; }
   .hero h1{ font-size:clamp(1.9rem,4.6vw,3.1rem); line-height:1.12; margin:0 0 18px; letter-spacing:-.01em; }
   .hero .lede{ font-size:clamp(1.02rem,2vw,1.18rem); color:var(--ink-soft); max-width:640px; margin:0 auto 30px; }
   .hero-ctas{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:14px; }
   .hero-note{ font-size:.86rem; color:var(--ink-soft); }
 
+  /* Collapsible hero / section pattern — closed by default so the scanner
+     tool itself sits right under the header instead of behind a long
+     landing-page scroll. */
+  .hero-details{ text-align:center; }
+  .hero-details summary{ list-style:none; cursor:pointer; display:block; width:100%; }
+  .hero-details summary::-webkit-details-marker{ display:none; }
+  .hero-summary-row{ display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; padding-block:6px; width:100%; }
+  .hero-toggle-hint{ display:inline-flex; align-items:center; gap:5px; font-size:.78rem; font-weight:600; color:var(--ink-soft); border:1px solid var(--line); padding:6px 12px; border-radius:999px; }
+  .hero-toggle-hint svg{ width:13px; height:13px; transition:transform .18s ease; }
+  .hero-details[open] .hero-toggle-hint svg{ transform:rotate(180deg); }
+  .hero-body{ padding-top:18px; }
+  .hero-mini-title{ font-family:'Sora','Inter',sans-serif; font-weight:700; font-size:1rem; margin:0; }
+  .privacy-badge{ display:inline-flex; align-items:center; gap:8px; font-size:.82rem; font-weight:600; color:var(--success); background:color-mix(in srgb, var(--success) 12%, transparent); border:1px solid color-mix(in srgb, var(--success) 30%, transparent); padding:8px 16px; border-radius:999px; margin-bottom:0; max-width:100%; }
+  .privacy-badge svg{ width:15px; height:15px; flex-shrink:0; }
+  .privacy-badge > span:not(svg){ min-width:0; }
+
+  .section-details summary{ list-style:none; cursor:pointer; display:block; width:100%; }
+  .section-details summary::-webkit-details-marker{ display:none; }
+  .section-summary-row{ display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; width:100%; }
+  .section-toggle-hint{ display:inline-flex; align-items:center; gap:5px; font-size:.8rem; font-weight:600; color:var(--ink-soft); border:1px solid var(--line); padding:6px 12px; border-radius:999px; flex-shrink:0; }
+  .section-toggle-hint svg{ width:13px; height:13px; transition:transform .18s ease; }
+  .section-details[open] .section-toggle-hint svg{ transform:rotate(180deg); }
+  .section-body{ padding-top:20px; }
+  @media (max-width:640px){
+    .hero-summary-row, .section-summary-row{ flex-direction:column; align-items:center; text-align:center; gap:6px; }
+    .section-summary-row h2{ width:100%; }
+  }
+
   /* Feature strip */
-  .feature-strip{ padding:10px 0 clamp(30px,6vw,54px); }
+  .feature-strip{ padding-block:10px; }
   .feature-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:16px; }
   .feature-card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:22px 20px; box-shadow:0 10px 30px -22px rgba(40,28,16,.18); }
   .feature-card .fi{ width:40px; height:40px; border-radius:11px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); display:flex; align-items:center; justify-content:center; font-size:1.15rem; margin-bottom:12px; }
@@ -205,7 +233,7 @@
   .modal-foot{ display:flex; justify-content:flex-end; gap:10px; padding:16px 22px; padding-bottom:calc(16px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line); position:sticky; bottom:0; background:var(--card); z-index:5; }
 
   /* How it works */
-  .how{ padding:clamp(30px,6vw,54px) 0; }
+  .how{ padding-block:10px; }
   .how h2, .faq h2{ font-size:clamp(1.4rem,3vw,1.9rem); text-align:center; margin:0 0 10px; }
   .how > .wrap > p, .faq > .wrap > p.sub{ text-align:center; color:var(--ink-soft); max-width:560px; margin:0 auto 32px; }
   .steps{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:18px; }
@@ -215,7 +243,7 @@
   .step p{ font-size:.86rem; color:var(--ink-soft); margin:0; }
 
   /* FAQ */
-  .faq{ padding:clamp(20px,5vw,44px) 0 clamp(40px,7vw,64px); }
+  .faq{ padding-block:10px; }
   .faq-list{ max-width:720px; margin:0 auto; display:flex; flex-direction:column; gap:10px; }
   details.faq-item{ border:1px solid var(--line); border-radius:12px; background:var(--card); padding:4px 18px; }
   details.faq-item summary{ cursor:pointer; padding:14px 0; font-weight:700; font-size:.94rem; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:10px; }
@@ -273,38 +301,23 @@
 
 <section class="hero">
   <div class="wrap">
-    <p class="hero-kicker" data-i18n="heroKicker">SKENER DOKUMENTŮ</p>
-    <h1 data-i18n="heroTitle">Vyfoťte dokument, appka ho promění v PDF</h1>
-    <p class="lede" data-i18n="heroLede">Xtally Scanner naskenuje dokumenty fotoaparátem nebo z nahraných fotek přímo ve vašem prohlížeči — automaticky ořízne, narovná perspektivu a spojí libovolný počet stránek do jednoho PDF.</p>
-    <div class="hero-ctas">
-      <a href="#app" class="btn btn-primary" data-i18n="heroCta">📷 Spustit skener</a>
-    </div>
-    <p class="hero-note" data-i18n="heroNote">Zdarma, bez registrace, funguje i offline. Nic se neodesílá na žádný server.</p>
-  </div>
-</section>
-
-<section class="feature-strip">
-  <div class="wrap feature-grid">
-    <div class="feature-card">
-      <div class="fi">📚</div>
-      <h3 data-i18n="feat1h">Vícestránkové PDF</h3>
-      <p data-i18n="feat1p">Naskenujte libovolný počet stránek za sebou a spojte je do jednoho PDF souboru.</p>
-    </div>
-    <div class="feature-card">
-      <div class="fi">✂️</div>
-      <h3 data-i18n="feat2h">Automatický ořez a narovnání</h3>
-      <p data-i18n="feat2p">Appka se pokusí sama najít okraje dokumentu a narovnat perspektivu — rohy si kdykoli doladíte přetažením.</p>
-    </div>
-    <div class="feature-card">
-      <div class="fi">🎛️</div>
-      <h3 data-i18n="feat3h">Filtry pro čitelnost</h3>
-      <p data-i18n="feat3p">Černobílý nebo vysoce kontrastní filtr, aby naskenovaný text vypadal jako z opravdového skeneru.</p>
-    </div>
-    <div class="feature-card">
-      <div class="fi">🔒</div>
-      <h3 data-i18n="feat4h">Vše jen ve vašem prohlížeči</h3>
-      <p data-i18n="feat4p">Fotky, ořezy i výsledné PDF se zpracovávají lokálně. Nic se nikam neodesílá, appka funguje i bez internetu.</p>
-    </div>
+    <details class="hero-details" id="heroDetails">
+      <summary>
+        <div class="hero-summary-row">
+          <p class="hero-mini-title" data-i18n="brandWord2">Xtally Scanner</p>
+          <span class="hero-toggle-hint">
+            <span id="heroToggleLabel" data-i18n="heroToggleMore">O appce</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </summary>
+      <div class="hero-body">
+        <p class="hero-kicker" data-i18n="heroKicker">SKENER DOKUMENTŮ</p>
+        <h1 data-i18n="heroTitle">Vyfoťte dokument, appka ho promění v PDF</h1>
+        <p class="lede" data-i18n="heroLede">Xtally Scanner naskenuje dokumenty fotoaparátem nebo z nahraných fotek přímo ve vašem prohlížeči — automaticky ořízne, narovná perspektivu a spojí libovolný počet stránek do jednoho PDF.</p>
+        <p class="hero-note" data-i18n="heroNote">Zdarma, bez registrace, funguje i offline. Nic se neodesílá na žádný server.</p>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -364,65 +377,127 @@
   </div>
 </section>
 
+<section class="feature-strip">
+  <div class="wrap">
+    <details class="section-details" id="featuresDetails">
+      <summary>
+        <div class="section-summary-row">
+          <h2 data-i18n="featH2" style="margin:0;">Co Xtally Scanner umí</h2>
+          <span class="section-toggle-hint">
+            <span id="featuresToggleLabel" data-i18n="featuresToggleMore">Zobrazit</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </summary>
+      <div class="section-body feature-grid">
+        <div class="feature-card">
+          <div class="fi">📚</div>
+          <h3 data-i18n="feat1h">Vícestránkové PDF</h3>
+          <p data-i18n="feat1p">Naskenujte libovolný počet stránek za sebou a spojte je do jednoho PDF souboru.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fi">✂️</div>
+          <h3 data-i18n="feat2h">Automatický ořez a narovnání</h3>
+          <p data-i18n="feat2p">Appka se pokusí sama najít okraje dokumentu a narovnat perspektivu — rohy si kdykoli doladíte přetažením.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fi">🎛️</div>
+          <h3 data-i18n="feat3h">Filtry pro čitelnost</h3>
+          <p data-i18n="feat3p">Černobílý nebo vysoce kontrastní filtr, aby naskenovaný text vypadal jako z opravdového skeneru.</p>
+        </div>
+        <div class="feature-card">
+          <div class="fi">🔒</div>
+          <h3 data-i18n="feat4h">Vše jen ve vašem prohlížeči</h3>
+          <p data-i18n="feat4p">Fotky, ořezy i výsledné PDF se zpracovávají lokálně. Nic se nikam neodesílá, appka funguje i bez internetu.</p>
+        </div>
+      </div>
+    </details>
+  </div>
+</section>
+
 <section class="how">
   <div class="wrap">
-    <h2 data-i18n="howH2">Jak to funguje</h2>
-    <p data-i18n="howP">Čtyři kroky od fotky k hotovému PDF.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="sn">1</div>
-        <h3 data-i18n="step1h">Vyfoťte nebo nahrajte</h3>
-        <p data-i18n="step1p">Použijte fotoaparát přímo v appce, nebo nahrajte existující fotky dokumentu.</p>
+    <details class="section-details" id="howDetails">
+      <summary>
+        <div class="section-summary-row">
+          <h2 data-i18n="howH2" style="margin:0;">Jak to funguje</h2>
+          <span class="section-toggle-hint">
+            <span id="howToggleLabel" data-i18n="howToggleMore">Zobrazit</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </summary>
+      <div class="section-body">
+        <p style="text-align:center; color:var(--ink-soft); max-width:560px; margin:0 auto 32px;" data-i18n="howP">Čtyři kroky od fotky k hotovému PDF.</p>
+        <div class="steps">
+          <div class="step">
+            <div class="sn">1</div>
+            <h3 data-i18n="step1h">Vyfoťte nebo nahrajte</h3>
+            <p data-i18n="step1p">Použijte fotoaparát přímo v appce, nebo nahrajte existující fotky dokumentu.</p>
+          </div>
+          <div class="step">
+            <div class="sn">2</div>
+            <h3 data-i18n="step2h">Doladíte okraje</h3>
+            <p data-i18n="step2p">Appka navrhne ořez a narovnání automaticky, rohy si přetažením kdykoli upravíte.</p>
+          </div>
+          <div class="step">
+            <div class="sn">3</div>
+            <h3 data-i18n="step3h">Přidáte další stránky</h3>
+            <p data-i18n="step3p">Opakujte pro všechny stránky dokumentu — pořadí si potom snadno seřadíte.</p>
+          </div>
+          <div class="step">
+            <div class="sn">4</div>
+            <h3 data-i18n="step4h">Stáhnete PDF</h3>
+            <p data-i18n="step4p">Jedním klikem stáhnete všechny stránky jako jedno PDF, hotové k odeslání nebo tisku.</p>
+          </div>
+        </div>
       </div>
-      <div class="step">
-        <div class="sn">2</div>
-        <h3 data-i18n="step2h">Doladíte okraje</h3>
-        <p data-i18n="step2p">Appka navrhne ořez a narovnání automaticky, rohy si přetažením kdykoli upravíte.</p>
-      </div>
-      <div class="step">
-        <div class="sn">3</div>
-        <h3 data-i18n="step3h">Přidáte další stránky</h3>
-        <p data-i18n="step3p">Opakujte pro všechny stránky dokumentu — pořadí si potom snadno seřadíte.</p>
-      </div>
-      <div class="step">
-        <div class="sn">4</div>
-        <h3 data-i18n="step4h">Stáhnete PDF</h3>
-        <p data-i18n="step4p">Jedním klikem stáhnete všechny stránky jako jedno PDF, hotové k odeslání nebo tisku.</p>
-      </div>
-    </div>
+    </details>
   </div>
 </section>
 
 <section class="faq" id="faq">
   <div class="wrap">
-    <h2 data-i18n="faqH2">Časté dotazy</h2>
-    <p class="sub" data-i18n="faqSub">Vše, co byste mohli chtít vědět o Xtally Scanner.</p>
-    <div class="faq-list">
-      <details class="faq-item">
-        <summary data-i18n="faq1q">Je Xtally Scanner opravdu zdarma?</summary>
-        <p data-i18n="faq1a">Ano, appka je úplně zdarma, bez registrace, předplatného nebo skrytých poplatků.</p>
-      </details>
-      <details class="faq-item">
-        <summary data-i18n="faq2q">Odesílají se moje fotky nebo dokumenty někam na server?</summary>
-        <p data-i18n="faq2a">Ne. Fotoaparát, ořezání, narovnání perspektivy, filtry i sestavení PDF běží výhradně ve vašem prohlížeči pomocí HTML5 canvasu. Appka nemá žádný backend server, na který by se dala data odeslat.</p>
-      </details>
-      <details class="faq-item">
-        <summary data-i18n="faq3q">Zůstanou mi naskenované stránky po zavření appky?</summary>
-        <p data-i18n="faq3a">Ne, rozpracovaný sken appka trvale neukládá — zůstává jen v paměti prohlížeče, dokud máte appku otevřenou. Stránky si proto stáhněte jako PDF hned po dokončení skenování.</p>
-      </details>
-      <details class="faq-item">
-        <summary data-i18n="faq4q">Funguje automatické rozpoznání okrajů dokumentu vždy?</summary>
-        <p data-i18n="faq4a">Nejlépe funguje, když je dokument na tmavším nebo kontrastním podkladu a dobře nasvícený. Pokud appka okraje netrefí přesně, rohy si jednoduše doladíte přetažením — narovnání perspektivy se spočítá vždy přesně podle toho, kam rohy umístíte.</p>
-      </details>
-      <details class="faq-item">
-        <summary data-i18n="faq5q">Funguje appka bez internetu?</summary>
-        <p data-i18n="faq5a">Ano, po prvním načtení — Xtally Scanner je PWA (Progressive Web App) a klíčový obsah appky se uloží do zařízení. Přístup ke kameře vyžaduje prohlížeč vždy, ten funguje offline i online stejně.</p>
-      </details>
-      <details class="faq-item">
-        <summary data-i18n="faq6q">Souvisí Xtally Scanner se SYNTHLUCIDA?</summary>
-        <p data-i18n="faq6a">Ano, je to samostatný projekt z rodiny bezplatných webových nástrojů <a href="https://synthlucida.com" target="_blank" rel="noopener">SYNTHLUCIDA</a> — stejně jako <a href="https://webzen2026.github.io/xtally/" target="_blank" rel="noopener">Xtally Documents</a> a <a href="https://webzen2026.github.io/xtally-sheets/" target="_blank" rel="noopener">Xtally Sheets</a>.</p>
-      </details>
-    </div>
+    <details class="section-details" id="faqDetails">
+      <summary>
+        <div class="section-summary-row">
+          <h2 data-i18n="faqH2" style="margin:0;">Časté dotazy</h2>
+          <span class="section-toggle-hint">
+            <span id="faqToggleLabel" data-i18n="faqToggleMore">Zobrazit</span>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </summary>
+      <div class="section-body">
+        <p class="sub" style="text-align:center; color:var(--ink-soft); max-width:560px; margin:0 auto 32px;" data-i18n="faqSub">Vše, co byste mohli chtít vědět o Xtally Scanner.</p>
+        <div class="faq-list">
+          <details class="faq-item">
+            <summary data-i18n="faq1q">Je Xtally Scanner opravdu zdarma?</summary>
+            <p data-i18n="faq1a">Ano, appka je úplně zdarma, bez registrace, předplatného nebo skrytých poplatků.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq2q">Odesílají se moje fotky nebo dokumenty někam na server?</summary>
+            <p data-i18n="faq2a">Ne. Fotoaparát, ořezání, narovnání perspektivy, filtry i sestavení PDF běží výhradně ve vašem prohlížeči pomocí HTML5 canvasu. Appka nemá žádný backend server, na který by se dala data odeslat.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq3q">Zůstanou mi naskenované stránky po zavření appky?</summary>
+            <p data-i18n="faq3a">Ne, rozpracovaný sken appka trvale neukládá — zůstává jen v paměti prohlížeče, dokud máte appku otevřenou. Stránky si proto stáhněte jako PDF hned po dokončení skenování.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq4q">Funguje automatické rozpoznání okrajů dokumentu vždy?</summary>
+            <p data-i18n="faq4a">Nejlépe funguje, když je dokument na tmavším nebo kontrastním podkladu a dobře nasvícený. Pokud appka okraje netrefí přesně, rohy si jednoduše doladíte přetažením — narovnání perspektivy se spočítá vždy přesně podle toho, kam rohy umístíte.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq5q">Funguje appka bez internetu?</summary>
+            <p data-i18n="faq5a">Ano, po prvním načtení — Xtally Scanner je PWA (Progressive Web App) a klíčový obsah appky se uloží do zařízení. Přístup ke kameře vyžaduje prohlížeč vždy, ten funguje offline i online stejně.</p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="faq6q">Souvisí Xtally Scanner se SYNTHLUCIDA?</summary>
+            <p data-i18n="faq6a">Ano, je to samostatný projekt z rodiny bezplatných webových nástrojů <a href="https://synthlucida.com" target="_blank" rel="noopener">SYNTHLUCIDA</a> — stejně jako <a href="https://webzen2026.github.io/xtally/" target="_blank" rel="noopener">Xtally Documents</a> a <a href="https://webzen2026.github.io/xtally-sheets/" target="_blank" rel="noopener">Xtally Sheets</a>.</p>
+          </details>
+        </div>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -496,7 +571,13 @@
   /* ---------------- i18n ---------------- */
   var I18N = {
     cs: {
-      brandWord:"Scanner", pageTitle:"Xtally Scanner – Skener dokumentů do PDF zdarma online (PWA, offline)",
+      brandWord:"Scanner", brandWord2:"Xtally Scanner", pageTitle:"Xtally Scanner – Skener dokumentů do PDF zdarma online (PWA, offline)",
+      privacyBadge:"Nic se neodesílá na server – vše zůstává jen ve vašem zařízení",
+      heroToggleMore:"O appce", heroToggleLess:"Skrýt",
+      featuresToggleMore:"Zobrazit funkce", featuresToggleLess:"Skrýt funkce",
+      howToggleMore:"Zobrazit kroky", howToggleLess:"Skrýt kroky",
+      faqToggleMore:"Zobrazit dotazy", faqToggleLess:"Skrýt dotazy",
+      featH2:"Co Xtally Scanner umí",
       heroKicker:"SKENER DOKUMENTŮ", heroTitle:"Vyfoťte dokument, appka ho promění v PDF",
       heroLede:"Xtally Scanner naskenuje dokumenty fotoaparátem nebo z nahraných fotek přímo ve vašem prohlížeči — automaticky ořízne, narovná perspektivu a spojí libovolný počet stránek do jednoho PDF.",
       heroCta:"📷 Spustit skener", heroNote:"Zdarma, bez registrace, funguje i offline. Nic se neodesílá na žádný server.",
@@ -544,7 +625,13 @@
       supportLink:"Líbí se ti appka? Podpoř kávou ☕"
     },
     en: {
-      brandWord:"Scanner", pageTitle:"Xtally Scanner – Free Online Document Scanner to PDF (PWA, Offline)",
+      brandWord:"Scanner", brandWord2:"Xtally Scanner", pageTitle:"Xtally Scanner – Free Online Document Scanner to PDF (PWA, Offline)",
+      privacyBadge:"Nothing is ever uploaded — everything stays on your device",
+      heroToggleMore:"About the app", heroToggleLess:"Hide",
+      featuresToggleMore:"Show features", featuresToggleLess:"Hide features",
+      howToggleMore:"Show steps", howToggleLess:"Hide steps",
+      faqToggleMore:"Show questions", faqToggleLess:"Hide questions",
+      featH2:"What Xtally Scanner can do",
       heroKicker:"DOCUMENT SCANNER", heroTitle:"Snap a photo, get a PDF",
       heroLede:"Xtally Scanner scans documents with your camera or from uploaded photos, right in your browser — it automatically crops and straightens the perspective and combines any number of pages into a single PDF.",
       heroCta:"📷 Open the scanner", heroNote:"Free, no sign-up, works offline too. Nothing is ever uploaded to a server.",
@@ -1426,6 +1513,24 @@
   }
 
   applyI18n();
+
+  /* ---------------- Collapsible landing sections ---------------- */
+  function setupCollapsible(detailsId, labelId, moreKey, lessKey){
+    var d = document.getElementById(detailsId);
+    var label = document.getElementById(labelId);
+    function update(){
+      if (!d || !label) return;
+      var key = d.open ? lessKey : moreKey;
+      label.setAttribute("data-i18n", key);
+      label.textContent = t(key);
+    }
+    if (d){ d.addEventListener("toggle", update); update(); }
+    return update;
+  }
+  var updateHeroToggleLabel = setupCollapsible("heroDetails", "heroToggleLabel", "heroToggleMore", "heroToggleLess");
+  var updateFeaturesToggleLabel = setupCollapsible("featuresDetails", "featuresToggleLabel", "featuresToggleMore", "featuresToggleLess");
+  var updateHowToggleLabel = setupCollapsible("howDetails", "howToggleLabel", "howToggleMore", "howToggleLess");
+  var updateFaqToggleLabel = setupCollapsible("faqDetails", "faqToggleLabel", "faqToggleMore", "faqToggleLess");
 })();
 </script>
 </body>
