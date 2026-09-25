@@ -150,7 +150,7 @@
     <p data-i18n="p9">Tento dokument můžeme čas od času aktualizovat, pokud se změní fungování appky – například přidáním nové externí služby. Aktuální datum poslední aktualizace je uvedeno v úvodu stránky.</p>
 
     <h2 data-i18n="h9">Kontakt</h2>
-    <p data-i18n="p10">Xtally Scanner je součástí rodiny bezplatných webových nástrojů <a href="https://synthlucida.com" target="_blank" rel="noopener">SYNTHLUCIDA</a>, po boku sesterských appek <a href="https://webzen2026.github.io/xtally/" target="_blank" rel="noopener">Xtally Documents</a> a <a href="https://webzen2026.github.io/xtally-sheets/" target="_blank" rel="noopener">Xtally Sheets</a>. Dotazy k appce nebo k těmto zásadám můžete směřovat přes tyto weby.</p>
+    <p data-i18n="p10">Xtally Scanner je součástí rodiny bezplatných webových nástrojů <a href="https://synthlucida.com" target="_blank" rel="noopener">SYNTHLUCIDA</a>, po boku sesterských appek <a href="https://webzen2026.github.io/xtally/" target="_blank" rel="noopener">Xtally Dokumenty</a> a <a href="https://webzen2026.github.io/xtally-sheets/" target="_blank" rel="noopener">Xtally Tabulky</a>. Dotazy k appce nebo k těmto zásadám můžete směřovat přes tyto weby.</p>
 
     <p class="disclaimer" data-i18n="disclaimer">Tento text je srozumitelným popisem toho, jak appka technicky funguje, nikoliv formálním právním poradenstvím. Pokud potřebujete závazné právní stanovisko, například pro komerční nasazení, doporučujeme konzultaci s právníkem.</p>
   </div>
@@ -201,7 +201,7 @@
       h8:"Změny těchto zásad",
       p9:"Tento dokument můžeme čas od času aktualizovat, pokud se změní fungování appky – například přidáním nové externí služby. Aktuální datum poslední aktualizace je uvedeno v úvodu stránky.",
       h9:"Kontakt",
-      p10:"Xtally Scanner je součástí rodiny bezplatných webových nástrojů SYNTHLUCIDA, po boku sesterských appek Xtally Documents a Xtally Sheets. Dotazy k appce nebo k těmto zásadám můžete směřovat přes tyto weby.",
+      p10:"Xtally Scanner je součástí rodiny bezplatných webových nástrojů <a href=\"https://synthlucida.com\" target=\"_blank\" rel=\"noopener\">SYNTHLUCIDA</a>, po boku sesterských appek <a href=\"https://webzen2026.github.io/xtally/\" target=\"_blank\" rel=\"noopener\">Xtally Dokumenty</a> a <a href=\"https://webzen2026.github.io/xtally-sheets/\" target=\"_blank\" rel=\"noopener\">Xtally Tabulky</a>. Dotazy k appce nebo k těmto zásadám můžete směřovat přes tyto weby.",
       disclaimer:"Tento text je srozumitelným popisem toho, jak appka technicky funguje, nikoliv formálním právním poradenstvím. Pokud potřebujete závazné právní stanovisko, například pro komerční nasazení, doporučujeme konzultaci s právníkem.",
       footerNote:"Xtally Scanner je součástí rodiny bezplatných webových nástrojů"
     },
@@ -239,7 +239,7 @@
       h8:"Changes to this policy",
       p9:"We may update this document from time to time if how the app works changes — for example, by adding a new external service. The current last-updated date is shown at the top of this page.",
       h9:"Contact",
-      p10:"Xtally Scanner is part of the SYNTHLUCIDA family of free web tools, alongside its sibling apps Xtally Documents and Xtally Sheets. Questions about the app or this policy can be directed through those sites.",
+      p10:"Xtally Scanner is part of the <a href=\"https://synthlucida.com\" target=\"_blank\" rel=\"noopener\">SYNTHLUCIDA</a> family of free web tools, alongside its sibling apps <a href=\"https://webzen2026.github.io/xtally/\" target=\"_blank\" rel=\"noopener\">Xtally Documents</a> and <a href=\"https://webzen2026.github.io/xtally-sheets/\" target=\"_blank\" rel=\"noopener\">Xtally Sheets</a>. Questions about the app or this policy can be directed through those sites.",
       disclaimer:"This text is a plain-language description of how the app technically works, not formal legal advice. If you need a binding legal opinion, for example for commercial deployment, we recommend consulting a lawyer.",
       footerNote:"Xtally Scanner is part of the SYNTHLUCIDA family of free web tools"
     }
@@ -263,7 +263,7 @@
     document.querySelectorAll("[data-i18n]").forEach(function(el){
       var key = el.getAttribute("data-i18n");
       var val = t(key);
-      if (/^(ext1|ext2|p3)$/.test(key)) el.innerHTML = val; else el.textContent = val;
+      if (/^(ext1|ext2|p3|p10)$/.test(key)) el.innerHTML = val; else el.textContent = val;
     });
     document.querySelectorAll("#langSwitch button").forEach(function(b){ b.classList.toggle("active", b.dataset.lang === currentLang); });
   }

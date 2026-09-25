@@ -220,6 +220,7 @@
   .editor-quad-svg polygon{ fill:rgba(234,88,12,.22); stroke:#ea580c; stroke-width:2; }
   .corner-handle{ position:absolute; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; background:#ea580c; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.4); cursor:grab; touch-action:none; }
   .corner-handle:active{ cursor:grabbing; }
+  html.has-pages, html.has-pages body{ overscroll-behavior-y:contain; }
   @media (pointer:coarse){
     .corner-handle{ width:38px; height:38px; margin:-19px 0 0 -19px; border-width:4px; }
   }
@@ -612,6 +613,8 @@
       batchLoading:"Zpracovávám fotky…",
       pagesTitle:"Stránky", clearAllBtn:"🗑 Smazat vše", exportPdfBtn:"⬇️ Stáhnout jako PDF", exportingLabel:"Sestavuji PDF…",
       exportError:"Export do PDF se nepodařil. Zkuste to prosím znovu.",
+      toastImageUnsupported:"Tento obrázek prohlížeč neumí otevřít (např. HEIC z iPhonu). Zkuste JPG nebo PNG.",
+      toastSomeFailed:"Některé soubory se nepodařilo načíst: {0}",
       emptyStateText:"Zatím nemáte žádnou naskenovanou stránku. Vyfoťte dokument fotoaparátem, nebo nahrajte fotky výše.",
       pageEditTitle:"Upravit stránku", editorCornersLabel:"Rohy dokumentu", editorPreviewLabel:"Náhled",
       autoDetectBtn:"🪄 Auto-detekovat okraje", resetCornersBtn:"↺ Reset",
@@ -667,6 +670,8 @@
       batchLoading:"Processing photos…",
       pagesTitle:"Pages", clearAllBtn:"🗑 Clear all", exportPdfBtn:"⬇️ Download as PDF", exportingLabel:"Building PDF…",
       exportError:"Exporting to PDF failed. Please try again.",
+      toastImageUnsupported:"Your browser can't open this image (e.g. HEIC from an iPhone). Try JPG or PNG.",
+      toastSomeFailed:"Some files couldn't be loaded: {0}",
       emptyStateText:"You don't have any scanned pages yet. Take a photo with the camera, or upload photos above.",
       pageEditTitle:"Edit page", editorCornersLabel:"Document corners", editorPreviewLabel:"Preview",
       autoDetectBtn:"🪄 Auto-detect edges", resetCornersBtn:"↺ Reset",
@@ -899,7 +904,7 @@
     var sx = nw/w, sy = nh/h;
     var pts = [tl,tr,br,bl].map(function(p){ return { x:p.x*sx, y:p.y*sy }; });
     var cx=(pts[0].x+pts[1].x+pts[2].x+pts[3].x)/4, cy=(pts[0].y+pts[1].y+pts[2].y+pts[3].y)/4;
-    var m = 1.05;
+    var m = 1.01; /* dřív 1.05 – do skenu se pak dostával tmavý pruh podkladu kolem stránky */
     pts = pts.map(function(p){ return { x: clamp(cx+(p.x-cx)*m, 0, nw), y: clamp(cy+(p.y-cy)*m, 0, nh) }; });
     return pts;
   }
@@ -960,6 +965,49 @@
     applyFilterToImageData(outImageData, filter);
     octx.putImageData(outImageData,0,0);
     return outCanvas;
+  }
+
+  /* Otočení a zmenšení hotového canvasu */
+  function rotateCanvas(canvas, deg){
+    deg = ((deg % 360) + 360) % 360;
+    if (!deg) return canvas;
+    var swap = deg === 90 || deg === 270;
+    var c = document.createElement("canvas");
+    c.width = swap ? canvas.height : canvas.width; c.height = swap ? canvas.width : canvas.height;
+    var ctx = c.getContext("2d");
+    ctx.translate(c.width/2, c.height/2); ctx.rotate(deg * Math.PI/180);
+    ctx.drawImage(canvas, -canvas.width/2, -canvas.height/2);
+    return c;
+  }
+  function scaleCanvas(canvas, maxLongEdge){
+    var scale = Math.min(1, maxLongEdge / Math.max(canvas.width, canvas.height));
+    var c = document.createElement("canvas");
+    c.width = Math.max(1, Math.round(canvas.width*scale)); c.height = Math.max(1, Math.round(canvas.height*scale));
+    var ctx = c.getContext("2d"); ctx.imageSmoothingQuality = "high"; ctx.drawImage(canvas, 0, 0, c.width, c.height);
+    return c;
+  }
+  /* Vytvoří výslednou stránku (plná velikost + náhled) z původní fotky vždy znovu,
+     včetně otočení – dřív se otočení po úpravě rohů/filtru ztratilo a každé otočení
+     navíc znovu překomprimovalo JPEG (zhoršovala se kvalita). */
+  function renderPageImages(pg, srcEl){
+    var full = rotateCanvas(warpPerspective(srcEl, pg.quad, pg.filter, 1600), pg.rotation || 0);
+    var thumb = scaleCanvas(full, 300);
+    pg.fullDataURL = full.toDataURL("image/jpeg", 0.87); pg.fullW = full.width; pg.fullH = full.height;
+    pg.thumbDataURL = thumb.toDataURL("image/jpeg", 0.8);
+  }
+  /* Fotky z mobilu mají klidně 48–108 Mpx. Výstup má max. 1600 px, takže větší zdroj je
+     zbytečný – a iPhone navíc neumí canvas nad ~16 Mpx (stránka by vyšla prázdná). */
+  var MAX_SRC_EDGE = 3200;
+  function normalizeSource(dataURL){
+    return loadImageEl(dataURL).then(function(img){
+      var w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) throw new Error("empty image");
+      var scale = Math.min(1, MAX_SRC_EDGE / Math.max(w, h));
+      if (scale >= 1) return dataURL;
+      var c = document.createElement("canvas"); c.width = Math.round(w*scale); c.height = Math.round(h*scale);
+      var ctx = c.getContext("2d"); ctx.imageSmoothingQuality = "high"; ctx.drawImage(img, 0, 0, c.width, c.height);
+      return c.toDataURL("image/jpeg", 0.92);
+    });
   }
 
   /* ---------------- state ---------------- */
@@ -1066,6 +1114,8 @@
     pagesSection.hidden = !has;
     emptyState.hidden = has;
     exportPdfBtn.disabled = !has;
+    /* s rozpracovaným skenem vypnout "potažením obnovit" na mobilu (sken by zmizel) */
+    document.documentElement.classList.toggle("has-pages", has);
   }
 
   function movePage(i, dir){
@@ -1097,15 +1147,13 @@
 
   function rotatePage(id){
     var pg = pages.filter(function(p){ return p.id === id; })[0];
-    if (!pg) return;
-    Promise.all([
-      rotateDataURL(pg.fullDataURL, 90),
-      rotateDataURL(pg.thumbDataURL, 90)
-    ]).then(function(results){
-      pg.fullDataURL = results[0].dataURL; pg.fullW = results[0].w; pg.fullH = results[0].h;
-      pg.thumbDataURL = results[1].dataURL;
+    if (!pg || pg.__busy) return;
+    pg.__busy = true;
+    loadImageEl(pg.srcDataURL).then(function(img){
+      pg.rotation = ((pg.rotation || 0) + 90) % 360;
+      renderPageImages(pg, img);
       renderPages();
-    }).catch(function(){ /* ignore */ });
+    }).catch(function(){ /* ignore */ }).then(function(){ pg.__busy = false; });
   }
 
   function deletePage(id){
@@ -1159,7 +1207,8 @@
       showCameraError(t("cameraErrorUnsupported"));
       return;
     }
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: currentFacing } }, audio: false })
+    /* bez požadavku na rozlišení dá prohlížeč jen 640×480 – text na skenu by byl nečitelný */
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: currentFacing }, width: { ideal: 2560 }, height: { ideal: 1920 } }, audio: false })
       .then(function(stream){
         cameraStream = stream;
         cameraVideo.srcObject = stream;
@@ -1196,6 +1245,8 @@
   }
 
   startCameraBtn.addEventListener("click", startCamera);
+  /* kamera nemá svítit, když je appka v jiné kartě / na pozadí */
+  document.addEventListener("visibilitychange", function(){ if (document.hidden && cameraStream) stopCamera(); });
   stopCameraBtn.addEventListener("click", stopCamera);
   switchCameraBtn.addEventListener("click", function(){
     currentFacing = currentFacing === "environment" ? "user" : "environment";
@@ -1205,8 +1256,9 @@
   captureBtn.addEventListener("click", function(){
     var vw = cameraVideo.videoWidth, vh = cameraVideo.videoHeight;
     if (!vw || !vh) return;
-    var c = document.createElement("canvas"); c.width = vw; c.height = vh;
-    c.getContext("2d").drawImage(cameraVideo, 0, 0, vw, vh);
+    var sc = Math.min(1, MAX_SRC_EDGE / Math.max(vw, vh));
+    var c = document.createElement("canvas"); c.width = Math.round(vw*sc); c.height = Math.round(vh*sc);
+    c.getContext("2d").drawImage(cameraVideo, 0, 0, c.width, c.height);
     var dataURL = c.toDataURL("image/jpeg", 0.92);
     openEditorFromDataURL(dataURL, null);
   });
@@ -1237,7 +1289,9 @@
     var files = Array.prototype.slice.call(fileList || []).filter(function(f){ return f.type.indexOf("image/") === 0; });
     if (!files.length) return;
     if (files.length === 1){
-      readFileAsDataURL(files[0]).then(function(dataURL){ openEditorFromDataURL(dataURL, null); });
+      readFileAsDataURL(files[0]).then(normalizeSource)
+        .then(function(dataURL){ openEditorFromDataURL(dataURL, null); })
+        .catch(function(){ showToast(t("toastImageUnsupported")); });
     } else {
       batchAddFiles(files);
     }
@@ -1245,26 +1299,20 @@
 
   async function batchAddFiles(files){
     batchLoading.hidden = false;
+    var failed = [];
     for (var i=0;i<files.length;i++){
       try {
-        var dataURL = await readFileAsDataURL(files[i]);
+        var dataURL = await normalizeSource(await readFileAsDataURL(files[i]));
         var img = await loadImageEl(dataURL);
-        var quad = autoDetectQuad(img);
-        var fullCanvas = warpPerspective(img, quad, "original", 1600);
-        var thumbCanvas = warpPerspective(img, quad, "original", 300);
-        pages.push({
-          id: "p" + (++pageIdSeq),
-          srcDataURL: dataURL,
-          quad: quad,
-          filter: "original",
-          fullDataURL: fullCanvas.toDataURL("image/jpeg", 0.87),
-          fullW: fullCanvas.width, fullH: fullCanvas.height,
-          thumbDataURL: thumbCanvas.toDataURL("image/jpeg", 0.8)
-        });
-      } catch(err){ /* skip failed file */ }
+        var pg = { id: "p" + (++pageIdSeq), srcDataURL: dataURL, quad: autoDetectQuad(img), filter: "original", rotation: 0 };
+        renderPageImages(pg, img);
+        pages.push(pg);
+        renderPages(); /* stránky přibývají průběžně */
+      } catch(err){ failed.push(files[i].name); }
     }
     batchLoading.hidden = true;
     renderPages();
+    if (failed.length) showToast(t("toastSomeFailed").replace("{0}", failed.join(", ")));
   }
 
   uploadDrop.addEventListener("click", function(){ fileInput.click(); });
@@ -1300,6 +1348,8 @@
   function openEditorFromDataURL(dataURL, existingPage){
     editorModal.hidden = false;
     document.body.style.overflow = "hidden";
+    /* nepodporovaný formát: dřív zůstalo viset prázdné okno editoru */
+    editorImg.onerror = function(){ closeEditor(); showToast(t("toastImageUnsupported")); };
     editorImg.onload = function(){
       var nw = editorImg.naturalWidth, nh = editorImg.naturalHeight;
       editorState = {
@@ -1311,6 +1361,7 @@
       setFilterButtonsActive(editorState.filter);
       renderHandles();
       regeneratePreview();
+      requestAnimationFrame(renderHandles);
     };
     editorImg.src = dataURL;
   }
@@ -1319,7 +1370,12 @@
     editorModal.hidden = true;
     document.body.style.overflow = "";
     editorState = null;
+    activeHandle = null;
+    /* vyprázdnit obrázek, aby se při dalším otevření stejné stránky znovu spustil onload */
+    editorImg.onload = null; editorImg.onerror = null;
+    editorImg.removeAttribute("src");
   }
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !editorModal.hidden) closeEditor(); });
   editorCancelBtn.addEventListener("click", closeEditor);
   editorCloseBtn.addEventListener("click", closeEditor);
   editorModal.addEventListener("click", function(e){ if (e.target === editorModal) closeEditor(); });
@@ -1377,11 +1433,14 @@
     editorState.quad[activeHandle] = { x: px/scaleX, y: py/scaleY };
     renderHandles();
   });
-  document.addEventListener("pointerup", function(){
+  function endHandleDrag(){
     if (activeHandle === null) return;
     activeHandle = null;
     regeneratePreview();
-  });
+  }
+  document.addEventListener("pointerup", endHandleDrag);
+  /* přerušené dotykové gesto: jinak by roh "jezdil" s každým dalším pohybem myši/prstu */
+  document.addEventListener("pointercancel", endHandleDrag);
 
   window.addEventListener("resize", function(){ if (editorState) renderHandles(); });
 
@@ -1391,6 +1450,7 @@
     editorPreviewCanvas.width = result.width;
     editorPreviewCanvas.height = result.height;
     editorPreviewCanvas.getContext("2d").drawImage(result, 0, 0);
+    renderHandles(); /* náhled mohl posunout rozložení okna */
   }
 
   autoDetectBtn.addEventListener("click", function(){
@@ -1429,26 +1489,16 @@
     editorSaveBtn.textContent = t("editorSaving");
     setTimeout(function(){
       try {
-        var fullCanvas = warpPerspective(editorImg, editorState.quad, editorState.filter, 1600);
-        var thumbCanvas = warpPerspective(editorImg, editorState.quad, editorState.filter, 300);
-        var fullDataURL = fullCanvas.toDataURL("image/jpeg", 0.87);
-        var thumbDataURL = thumbCanvas.toDataURL("image/jpeg", 0.8);
         if (editorState.pageId){
           var pg = pages.filter(function(p){ return p.id === editorState.pageId; })[0];
           if (pg){
             pg.quad = editorState.quad; pg.filter = editorState.filter;
-            pg.fullDataURL = fullDataURL; pg.fullW = fullCanvas.width; pg.fullH = fullCanvas.height;
-            pg.thumbDataURL = thumbDataURL;
+            renderPageImages(pg, editorImg); /* zachová i dřívější otočení stránky */
           }
         } else {
-          pages.push({
-            id: "p" + (++pageIdSeq),
-            srcDataURL: editorState.srcDataURL,
-            quad: editorState.quad,
-            filter: editorState.filter,
-            fullDataURL: fullDataURL, fullW: fullCanvas.width, fullH: fullCanvas.height,
-            thumbDataURL: thumbDataURL
-          });
+          var npg = { id: "p" + (++pageIdSeq), srcDataURL: editorState.srcDataURL, quad: editorState.quad, filter: editorState.filter, rotation: 0 };
+          renderPageImages(npg, editorImg);
+          pages.push(npg);
         }
         closeEditor();
         renderPages();
@@ -1469,11 +1519,14 @@
       try {
         var ctor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
         if (!ctor) throw new Error("jsPDF not loaded");
-        var doc = new ctor({ unit: "pt", format: "a4" });
-        var pageW = 595.28, pageH = 841.89, margin = 24;
-        var availW = pageW - margin*2, availH = pageH - margin*2;
+        /* na šířku naskenované stránky dostanou A4 na šířku (dřív byly malé uprostřed svislé A4) */
+        function orient(pg){ return pg.fullW > pg.fullH ? "landscape" : "portrait"; }
+        var doc = new ctor({ unit: "pt", format: "a4", orientation: orient(pages[0]) });
+        var margin = 24;
         pages.forEach(function(pg, i){
-          if (i > 0) doc.addPage("a4");
+          if (i > 0) doc.addPage("a4", orient(pg));
+          var pageW = doc.internal.pageSize.getWidth(), pageH = doc.internal.pageSize.getHeight();
+          var availW = pageW - margin*2, availH = pageH - margin*2;
           var arImg = pg.fullW / pg.fullH;
           var arAvail = availW / availH;
           var w, h;
@@ -1485,7 +1538,8 @@
         var blob = doc.output("blob");
         var url = URL.createObjectURL(blob);
         var a = document.createElement("a");
-        a.href = url; a.download = "xtally-scan.pdf";
+        var now = new Date();
+        a.href = url; a.download = "xtally-scan-" + now.getFullYear() + "-" + ("0"+(now.getMonth()+1)).slice(-2) + "-" + ("0"+now.getDate()).slice(-2) + "-" + ("0"+now.getHours()).slice(-2) + ("0"+now.getMinutes()).slice(-2) + ".pdf";
         document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
       } catch(err){
@@ -1530,6 +1584,9 @@
       }
     });
   }
+
+  /* varování před zavřením / obnovením stránky, když je rozpracovaný sken (nikam se neukládá) */
+  window.addEventListener("beforeunload", function(e){ if (pages.length){ e.preventDefault(); e.returnValue = ""; } });
 
   /* ---------------- ?scan=1 shortcut (PWA app shortcut / deep link) ---------------- */
   if (urlParams.get("scan") === "1"){

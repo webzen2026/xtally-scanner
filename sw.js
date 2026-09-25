@@ -1,5 +1,5 @@
 // Xtally Scanner service worker — cache-first app shell, offline support
-const CACHE_NAME = "xtally-scanner-cache-v8";
+const CACHE_NAME = "xtally-scanner-cache-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
